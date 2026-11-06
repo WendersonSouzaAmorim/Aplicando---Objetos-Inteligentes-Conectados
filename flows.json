@@ -1,0 +1,396 @@
+[
+  {
+    "id": "tab-iot",
+    "type": "tab",
+    "label": "Monitoramento IoT ESP32",
+    "disabled": false,
+    "info": "Telemetria MQTT, painel HTTP e comandos dos atuadores."
+  },
+  {
+    "id": "mqtt-broker-iot",
+    "type": "mqtt-broker",
+    "name": "Mosquitto local (Docker)",
+    "broker": "mosquitto",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": ""
+  },
+  {
+    "id": "mqtt-env-in",
+    "type": "mqtt in",
+    "z": "tab-iot",
+    "name": "Telemetria ambiental",
+    "x": 180,
+    "y": 120,
+    "wires": [
+      [
+        "json-env"
+      ]
+    ],
+    "topic": "monitoramento/esp32/telemetry/environment",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "mqtt-broker-iot",
+    "nl": false,
+    "rap": true,
+    "rto": 0,
+    "inputs": 0
+  },
+  {
+    "id": "json-env",
+    "type": "json",
+    "z": "tab-iot",
+    "name": "Interpretar JSON ambiental",
+    "x": 390,
+    "y": 120,
+    "wires": [
+      [
+        "save-env"
+      ]
+    ],
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "propertyType": "msg"
+  },
+  {
+    "id": "save-env",
+    "type": "function",
+    "z": "tab-iot",
+    "name": "Salvar última telemetria ambiental",
+    "x": 640,
+    "y": 120,
+    "wires": [
+      []
+    ],
+    "func": "const p = msg.payload || {};\nconst received = Date.now();\np.received_at_ms = received;\nconst ts = Number(p.timestamp_ms || 0);\np.latency_ms = ts > 0 ? Math.max(0, received - ts) : null;\nflow.set('environment', p);\nreturn null;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "mqtt-ecg-in",
+    "type": "mqtt in",
+    "z": "tab-iot",
+    "name": "Lotes de ECG",
+    "x": 180,
+    "y": 200,
+    "wires": [
+      [
+        "json-ecg"
+      ]
+    ],
+    "topic": "monitoramento/esp32/telemetry/ecg",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "mqtt-broker-iot",
+    "nl": false,
+    "rap": true,
+    "rto": 0,
+    "inputs": 0
+  },
+  {
+    "id": "json-ecg",
+    "type": "json",
+    "z": "tab-iot",
+    "name": "Interpretar JSON ECG",
+    "x": 390,
+    "y": 200,
+    "wires": [
+      [
+        "save-ecg"
+      ]
+    ],
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "propertyType": "msg"
+  },
+  {
+    "id": "save-ecg",
+    "type": "function",
+    "z": "tab-iot",
+    "name": "Salvar último lote ECG",
+    "x": 640,
+    "y": 200,
+    "wires": [
+      []
+    ],
+    "func": "const p = msg.payload || {};\nconst received = Date.now();\np.received_at_ms = received;\nconst ts = Number(p.timestamp_ms || 0);\np.latency_ms = ts > 0 ? Math.max(0, received - ts) : null;\nflow.set('ecg', p);\nreturn null;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "mqtt-status-in",
+    "type": "mqtt in",
+    "z": "tab-iot",
+    "name": "Estado dos atuadores",
+    "x": 180,
+    "y": 280,
+    "wires": [
+      [
+        "json-status"
+      ]
+    ],
+    "topic": "monitoramento/esp32/actuator/status",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "mqtt-broker-iot",
+    "nl": false,
+    "rap": true,
+    "rto": 0,
+    "inputs": 0
+  },
+  {
+    "id": "json-status",
+    "type": "json",
+    "z": "tab-iot",
+    "name": "Interpretar estado dos atuadores",
+    "x": 390,
+    "y": 280,
+    "wires": [
+      [
+        "save-status"
+      ]
+    ],
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "propertyType": "msg"
+  },
+  {
+    "id": "save-status",
+    "type": "function",
+    "z": "tab-iot",
+    "name": "Salvar estado dos atuadores",
+    "x": 640,
+    "y": 280,
+    "wires": [
+      []
+    ],
+    "func": "const p = msg.payload || {};\nflow.set('actuators', p);\nreturn null;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "http-page-in",
+    "type": "http in",
+    "z": "tab-iot",
+    "name": "Abrir painel",
+    "x": 180,
+    "y": 400,
+    "wires": [
+      [
+        "template-page"
+      ]
+    ],
+    "url": "/monitoramento",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": ""
+  },
+  {
+    "id": "template-page",
+    "type": "template",
+    "z": "tab-iot",
+    "name": "Página de monitoramento",
+    "x": 420,
+    "y": 400,
+    "wires": [
+      [
+        "set-html-headers"
+      ]
+    ],
+    "field": "payload",
+    "format": "handlebars",
+    "syntax": "mustache",
+    "template": "<!doctype html>\n<html lang=\"pt-BR\">\n<head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Monitoramento IoT</title>\n<style>\n:root{font-family:system-ui,Arial,sans-serif;color:#17202a;background:#f3f6f9}body{margin:0;padding:24px}main{max-width:1100px;margin:auto}h1{margin:0 0 6px}.sub{color:#5b6570;margin:0 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.card{background:white;border:1px solid #dce3ea;border-radius:12px;padding:18px;box-shadow:0 2px 8px #17202a0a}.label{font-size:13px;color:#5b6570}.value{font-size:30px;font-weight:700;margin-top:8px}.unit{font-size:14px;font-weight:500;color:#5b6570}.wide{margin-top:14px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:8px;padding:11px 18px;font-weight:700;cursor:pointer;background:#e8eef5;color:#17202a}button:hover{filter:brightness(.96)}.on{background:#d7f2df}.off{background:#f8dddd}.auto{background:#dce9fa}canvas{width:100%;height:160px;border:1px solid #e2e8ef;border-radius:8px}.status{margin-top:12px;color:#5b6570;font-size:13px}.error{color:#a32626}.small{font-size:12px;color:#5b6570}\n</style>\n</head>\n<body><main>\n<h1>Monitoramento IoT — ESP32</h1><p class=\"sub\">Telemetria MQTT e controle remoto de atuadores por Node-RED.</p>\n<section class=\"grid\">\n <article class=\"card\"><div class=\"label\">Temperatura</div><div class=\"value\" id=\"temp\">— <span class=\"unit\">°C</span></div></article>\n <article class=\"card\"><div class=\"label\">Umidade do ar</div><div class=\"value\" id=\"hum\">— <span class=\"unit\">%</span></div></article>\n <article class=\"card\"><div class=\"label\">Umidade do solo</div><div class=\"value\" id=\"soil\">— <span class=\"unit\">%</span></div><div class=\"small\" id=\"soilraw\">ADC: —</div></article>\n <article class=\"card\"><div class=\"label\">Modo dos atuadores</div><div class=\"value\" id=\"mode\">—</div><div class=\"small\" id=\"actuators\">LED: — | Buzzer: —</div></article>\n</section>\n<section class=\"card wide\"><strong>Sinal do AD8232 — último lote recebido</strong><p class=\"small\">Visualização das amostras brutas; não representa diagnóstico nem interpretação clínica.</p><canvas id=\"ecg\" width=\"1000\" height=\"160\"></canvas><div class=\"small\" id=\"ecgmeta\">Aguardando lote de ECG...</div></section>\n<section class=\"card wide\"><strong>Comandos dos atuadores</strong><div class=\"actions\"><button class=\"on\" onclick=\"sendCommand('ON')\">Ligar (ON)</button><button class=\"off\" onclick=\"sendCommand('OFF')\">Desligar (OFF)</button><button class=\"auto\" onclick=\"sendCommand('AUTO')\">Automático (AUTO)</button></div><div class=\"status\" id=\"message\">Aguardando dados...</div></section>\n<p class=\"small\">A leitura de ECG é experimental e este protótipo não é equipamento médico. Atualização automática a cada 1,5 segundo.</p>\n</main>\n<script>\nconst byId=id=>document.getElementById(id);\nfunction fmt(v,d=1){return (v===null||v===undefined||Number.isNaN(Number(v)))?'—':Number(v).toFixed(d)}\nfunction drawEcg(samples){const c=byId('ecg'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle='#d8e1ea';ctx.lineWidth=1;ctx.beginPath();for(let y=20;y<c.height;y+=20){ctx.moveTo(0,y);ctx.lineTo(c.width,y)}ctx.stroke();if(!Array.isArray(samples)||samples.length<2)return;let min=Math.min(...samples),max=Math.max(...samples);if(max===min)max=min+1;ctx.strokeStyle='#1769aa';ctx.lineWidth=2;ctx.beginPath();samples.forEach((v,i)=>{const x=i*c.width/(samples.length-1),y=c.height-12-(Number(v)-min)*(c.height-24)/(max-min);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke()}\nasync function refresh(){try{const r=await fetch('/api/estado',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const s=await r.json();const e=s.environment||{};const a=s.actuators||{};const g=s.ecg||{};byId('temp').innerHTML=fmt(e.temperature_c)+' <span class=\"unit\">°C</span>';byId('hum').innerHTML=fmt(e.humidity_pct)+' <span class=\"unit\">%</span>';byId('soil').innerHTML=fmt(e.soil_pct)+' <span class=\"unit\">%</span>';byId('soilraw').textContent='ADC: '+(e.soil_raw??'—')+' | Alarme de solo seco: '+(a.soil_dry_alarm?'sim':'não');byId('mode').textContent=a.mode||'—';byId('actuators').textContent='LED: '+(a.led?'ligado':'desligado')+' | Buzzer: '+(a.buzzer?'ligado':'desligado');if(g.samples){drawEcg(g.samples);byId('ecgmeta').textContent='Lote: '+(g.sequence??'—')+' | Taxa: '+(g.sample_rate_hz??'—')+' Hz | Latência aproximada de recebimento: '+(g.latency_ms??'—')+' ms'}byId('message').textContent='Última atualização: '+new Date().toLocaleTimeString();}catch(e){byId('message').textContent='Falha ao consultar dados: '+e.message;byId('message').className='status error'}}\nasync function sendCommand(command){try{const r=await fetch('/api/comando',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command})});const b=await r.json();byId('message').textContent=b.message||('Comando '+command+' enviado.');if(!r.ok)throw new Error(b.message||'Falha');}catch(e){byId('message').textContent='Erro ao enviar comando: '+e.message;byId('message').className='status error'}}\nrefresh();setInterval(refresh,1500);\n</script></body></html>",
+    "output": "str",
+    "xss": false,
+    "property": "payload"
+  },
+  {
+    "id": "set-html-headers",
+    "type": "function",
+    "z": "tab-iot",
+    "name": "Definir cabeçalho HTML",
+    "func": "msg.headers = {\"Content-Type\":\"text/html; charset=utf-8\", \"Cache-Control\":\"no-store\"};\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 650,
+    "y": 400,
+    "wires": [
+      [
+        "http-page-out"
+      ]
+    ]
+  },
+  {
+    "id": "http-page-out",
+    "type": "http response",
+    "z": "tab-iot",
+    "name": "Responder painel",
+    "x": 670,
+    "y": 400,
+    "wires": [
+      []
+    ],
+    "statusCode": ""
+  },
+  {
+    "id": "http-api-in",
+    "type": "http in",
+    "z": "tab-iot",
+    "name": "API de estado",
+    "x": 180,
+    "y": 500,
+    "wires": [
+      [
+        "api-state"
+      ]
+    ],
+    "url": "/api/estado",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": ""
+  },
+  {
+    "id": "api-state",
+    "type": "function",
+    "z": "tab-iot",
+    "name": "Montar estado atual",
+    "x": 430,
+    "y": 500,
+    "wires": [
+      [
+        "http-api-out"
+      ]
+    ],
+    "func": "msg.headers = {\"Content-Type\":\"application/json; charset=utf-8\", \"Cache-Control\":\"no-store\"};\nmsg.statusCode = 200;\nmsg.payload = {\n  environment: flow.get('environment') || {},\n  ecg: flow.get('ecg') || {},\n  actuators: flow.get('actuators') || {}\n};\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "http-api-out",
+    "type": "http response",
+    "z": "tab-iot",
+    "name": "Responder API",
+    "x": 670,
+    "y": 500,
+    "wires": [
+      []
+    ],
+    "statusCode": ""
+  },
+  {
+    "id": "http-command-in",
+    "type": "http in",
+    "z": "tab-iot",
+    "name": "Receber comando",
+    "x": 180,
+    "y": 610,
+    "wires": [
+      [
+        "json-command"
+      ]
+    ],
+    "url": "/api/comando",
+    "method": "post",
+    "upload": false,
+    "swaggerDoc": ""
+  },
+  {
+    "id": "json-command",
+    "type": "json",
+    "z": "tab-iot",
+    "name": "Interpretar comando JSON",
+    "x": 390,
+    "y": 610,
+    "wires": [
+      [
+        "validate-command"
+      ]
+    ],
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "propertyType": "msg"
+  },
+  {
+    "id": "validate-command",
+    "type": "function",
+    "z": "tab-iot",
+    "name": "Validar comando e encaminhar",
+    "x": 640,
+    "y": 610,
+    "wires": [
+      [
+        "mqtt-command-out"
+      ],
+      [
+        "http-command-out"
+      ]
+    ],
+    "func": "let body = msg.payload;\nif (typeof body === 'string') {\n  try { body = JSON.parse(body); } catch (e) { body = {command: body}; }\n}\nconst command = String((body && body.command) || '').trim().toUpperCase();\nif (!['ON','OFF','AUTO'].includes(command)) {\n  return [null, {statusCode:400, headers:{\"Content-Type\":\"application/json\"}, payload:{accepted:false,message:\"Comando inválido. Use ON, OFF ou AUTO.\"}}];\n}\nconst mqttMessage = {topic:\"monitoramento/esp32/actuator/command\", payload:command, qos:0, retain:false};\nconst httpMessage = {statusCode:202, headers:{\"Content-Type\":\"application/json\"}, payload:{accepted:true,command,message:\"Comando encaminhado ao broker MQTT.\"}};\nreturn [mqttMessage, httpMessage];",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "mqtt-command-out",
+    "type": "mqtt out",
+    "z": "tab-iot",
+    "name": "Publicar comando MQTT",
+    "x": 930,
+    "y": 590,
+    "wires": [
+      []
+    ],
+    "topic": "",
+    "qos": "",
+    "retain": "",
+    "broker": "mqtt-broker-iot"
+  },
+  {
+    "id": "http-command-out",
+    "type": "http response",
+    "z": "tab-iot",
+    "name": "Responder solicitação",
+    "x": 930,
+    "y": 660,
+    "wires": [
+      []
+    ],
+    "statusCode": ""
+  }
+]
