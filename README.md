@@ -1,2 +1,5 @@
 # Aplicando---Objetos-Inteligentes-Conectados
 Sistema IoT de baixo custo para monitoramento de sinais vitais e condições ambientais utilizando ESP32, sensores AD8232, DHT22 e SEN0193. Integra comunicação TCP/IP via Wi-Fi e protocolo MQTT com Node-RED para visualização de dados e controle remoto de atuadores.
+
+
+O projeto consiste em um sistema de monitoramento IoT de baixo custo, desenvolvido com a plataforma ESP32, para aquisição de sinais de ECG e de variáveis ambientais, como temperatura, umidade do ar e umidade do solo e, os dados são coletados pelos sensores, transmitidos pela rede Wi-Fi utilizando o protocolo MQTT e disponibilizados em uma interface Node-RED para visualização e acompanhamento remoto fora que, o sistema também permite o envio de comandos pela internet para controlar um LED e um buzzer e, para reproduzir o projeto, é necessário montar o circuito conforme as conexões documentadas, configurar as credenciais de Wi-Fi e do broker MQTT, carregar o firmware no ESP32 e importar o fluxo disponibilizado no Node-RED.
