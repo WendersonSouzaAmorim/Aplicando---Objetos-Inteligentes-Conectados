@@ -1,0 +1,243 @@
+[
+  {
+    "id": "tab_iot",
+    "type": "tab",
+    "label": "Monitoramento IoT",
+    "disabled": false,
+    "info": "Recepção de telemetria e envio de comandos MQTT."
+  },
+  {
+    "id": "broker",
+    "type": "mqtt-broker",
+    "name": "Mosquitto local",
+    "broker": "mosquitto",
+    "port": "1883",
+    "clientid": "nodered-monitoramento",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": ""
+  },
+  {
+    "id": "mqtt_in_telemetry",
+    "type": "mqtt in",
+    "z": "tab_iot",
+    "name": "Telemetria dos sensores",
+    "topic": "monitoramento/sensores",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 180,
+    "y": 120,
+    "wires": [
+      [
+        "json_telemetry"
+      ]
+    ]
+  },
+  {
+    "id": "json_telemetry",
+    "type": "json",
+    "z": "tab_iot",
+    "name": "Interpretar JSON",
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "x": 400,
+    "y": 120,
+    "wires": [
+      [
+        "debug_telemetry"
+      ]
+    ]
+  },
+  {
+    "id": "debug_telemetry",
+    "type": "debug",
+    "z": "tab_iot",
+    "name": "Dados dos sensores",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 630,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "mqtt_in_status",
+    "type": "mqtt in",
+    "z": "tab_iot",
+    "name": "Status dos atuadores",
+    "topic": "monitoramento/status",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 180,
+    "y": 200,
+    "wires": [
+      [
+        "json_status"
+      ]
+    ]
+  },
+  {
+    "id": "json_status",
+    "type": "json",
+    "z": "tab_iot",
+    "name": "Interpretar status",
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "x": 400,
+    "y": 200,
+    "wires": [
+      [
+        "debug_status"
+      ]
+    ]
+  },
+  {
+    "id": "debug_status",
+    "type": "debug",
+    "z": "tab_iot",
+    "name": "Confirmação de comandos",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 650,
+    "y": 200,
+    "wires": []
+  },
+  {
+    "id": "inject_on",
+    "type": "inject",
+    "z": "tab_iot",
+    "name": "Ligar (ON)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "ON",
+    "payloadType": "str",
+    "x": 150,
+    "y": 320,
+    "wires": [
+      [
+        "mqtt_out_commands"
+      ]
+    ]
+  },
+  {
+    "id": "inject_off",
+    "type": "inject",
+    "z": "tab_iot",
+    "name": "Desligar (OFF)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "OFF",
+    "payloadType": "str",
+    "x": 160,
+    "y": 370,
+    "wires": [
+      [
+        "mqtt_out_commands"
+      ]
+    ]
+  },
+  {
+    "id": "inject_auto",
+    "type": "inject",
+    "z": "tab_iot",
+    "name": "Automático (AUTO)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "AUTO",
+    "payloadType": "str",
+    "x": 170,
+    "y": 420,
+    "wires": [
+      [
+        "mqtt_out_commands"
+      ]
+    ]
+  },
+  {
+    "id": "mqtt_out_commands",
+    "type": "mqtt out",
+    "z": "tab_iot",
+    "name": "Enviar comando ao ESP32",
+    "topic": "monitoramento/comandos",
+    "qos": "",
+    "retain": "",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "broker",
+    "x": 490,
+    "y": 370,
+    "wires": []
+  },
+  {
+    "id": "comment",
+    "type": "comment",
+    "z": "tab_iot",
+    "name": "Comandos: ON liga LED e buzzer; OFF desliga; AUTO usa o limite de umidade do solo.",
+    "info": "",
+    "x": 430,
+    "y": 470,
+    "wires": []
+  }
+]

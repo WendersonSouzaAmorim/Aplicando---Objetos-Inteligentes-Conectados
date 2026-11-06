@@ -1,0 +1,26 @@
+{
+  "telemetry": {
+    "device_id": "esp32-monitoramento-01",
+    "timestamp_ms": 1793970000000,
+    "temperature_c": 24.8,
+    "air_humidity_percent": 58.2,
+    "soil_raw": 1850,
+    "soil_humidity_percent": 62,
+    "ecg_sample_rate_hz": 25,
+    "ecg_timestamp_ms": 1793970000000,
+    "ecg": [
+      2048,
+      2052,
+      2045,
+      2051,
+      2049
+    ]
+  },
+  "status": {
+    "mode": "AUTO",
+    "led": "OFF",
+    "buzzer": "OFF",
+    "last_command": "AUTO",
+    "timestamp_ms": 1793970000000
+  }
+}
