@@ -1,0 +1,209 @@
+{
+  "version": 1,
+  "author": "Projeto OIC Mackenzie - Aula 4",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": -124.8,
+      "left": 24.04,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 188.4,
+      "left": 42.2,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": -132,
+      "left": 405,
+      "attrs": {
+        "volume": "0.1"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -124.5,
+      "left": -207,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot1",
+      "top": -126.1,
+      "left": 297.4,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot2",
+      "top": -126.1,
+      "left": 182.2,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 224.75,
+      "left": -76.8,
+      "attrs": {
+        "value": "220"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:TX",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "esp:RX",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "dht1:VCC",
+      "esp:3V3",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "pot2:GND",
+      "esp:GND.3",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "pot1:GND",
+      "esp:GND.3",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "dht1:GND",
+      "esp:GND.1",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "pot2:SIG",
+      "esp:34",
+      "green",
+      [
+        "v-96",
+        "h-288.4",
+        "v96"
+      ]
+    ],
+    [
+      "pot2:VCC",
+      "esp:3V3",
+      "red",
+      [
+        "v-105.6",
+        "h-212",
+        "v67.2"
+      ]
+    ],
+    [
+      "pot1:SIG",
+      "esp:35",
+      "green",
+      [
+        "v-124.8",
+        "h-336.4",
+        "v134.4"
+      ]
+    ],
+    [
+      "pot1:VCC",
+      "esp:3V3",
+      "red",
+      [
+        "v-105.6",
+        "h-327.2",
+        "v67.2"
+      ]
+    ],
+    [
+      "dht1:SDA",
+      "esp:4",
+      "green",
+      [
+        "v172.8",
+        "h336.1",
+        "v-144"
+      ]
+    ],
+    [
+      "led2:A",
+      "r1:2",
+      "green",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "r1:1",
+      "esp:25",
+      "green",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "led2:C",
+      "esp:GND.1",
+      "black",
+      [
+        "v28.8",
+        "h-172.4",
+        "v-230.4"
+      ]
+    ],
+    [
+      "bz1:2",
+      "esp:26",
+      "green",
+      [
+        "v38.4",
+        "h-0.4",
+        "v115.2",
+        "h-451.2",
+        "v-115.2"
+      ]
+    ],
+    [
+      "bz1:1",
+      "esp:GND.2",
+      "black",
+      [
+        "v9.6",
+        "h-48",
+        "v-172.8",
+        "h-230.4",
+        "v115.2"
+      ]
+    ]
+  ],
+  "dependencies": {}
+}
