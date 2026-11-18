@@ -1,0 +1,276 @@
+[
+  {
+    "id": "tab-a4-hivemq",
+    "type": "tab",
+    "label": "OIC A4 - HiveMQ",
+    "disabled": false,
+    "info": "Telemetria e comandos ESP32 via HiveMQ Public Broker."
+  },
+  {
+    "id": "hivemq-a4-broker",
+    "type": "mqtt-broker",
+    "name": "HiveMQ Public",
+    "broker": "broker.hivemq.com",
+    "port": "1883",
+    "clientid": "mackenzie-nodered-a4-48317",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "mqtt-in-sensores",
+    "type": "mqtt in",
+    "z": "tab-a4-hivemq",
+    "name": "Telemetria ESP32",
+    "topic": "mck/oic/a4/demo-48317/monitoramento/sensores",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "hivemq-a4-broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 170,
+    "y": 100,
+    "wires": [
+      [
+        "json-sensores"
+      ]
+    ]
+  },
+  {
+    "id": "json-sensores",
+    "type": "json",
+    "z": "tab-a4-hivemq",
+    "name": "JSON sensores",
+    "property": "payload",
+    "action": "obj",
+    "pretty": false,
+    "x": 390,
+    "y": 100,
+    "wires": [
+      [
+        "debug-sensores"
+      ]
+    ]
+  },
+  {
+    "id": "debug-sensores",
+    "type": "debug",
+    "z": "tab-a4-hivemq",
+    "name": "Dados dos sensores",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 620,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "mqtt-in-status",
+    "type": "mqtt in",
+    "z": "tab-a4-hivemq",
+    "name": "Status ESP32",
+    "topic": "mck/oic/a4/demo-48317/monitoramento/status",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "hivemq-a4-broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 160,
+    "y": 180,
+    "wires": [
+      [
+        "json-status"
+      ]
+    ]
+  },
+  {
+    "id": "json-status",
+    "type": "json",
+    "z": "tab-a4-hivemq",
+    "name": "JSON status",
+    "property": "payload",
+    "action": "obj",
+    "pretty": false,
+    "x": 380,
+    "y": 180,
+    "wires": [
+      [
+        "debug-status"
+      ]
+    ]
+  },
+  {
+    "id": "debug-status",
+    "type": "debug",
+    "z": "tab-a4-hivemq",
+    "name": "Confirmações e estado",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 620,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "inject-on",
+    "type": "inject",
+    "z": "tab-a4-hivemq",
+    "name": "Ligar (ON)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "ON",
+    "payloadType": "str",
+    "x": 160,
+    "y": 300,
+    "wires": [
+      [
+        "function-command"
+      ]
+    ]
+  },
+  {
+    "id": "inject-off",
+    "type": "inject",
+    "z": "tab-a4-hivemq",
+    "name": "Desligar (OFF)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "OFF",
+    "payloadType": "str",
+    "x": 160,
+    "y": 360,
+    "wires": [
+      [
+        "function-command"
+      ]
+    ]
+  },
+  {
+    "id": "inject-auto",
+    "type": "inject",
+    "z": "tab-a4-hivemq",
+    "name": "Automático (AUTO)",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "AUTO",
+    "payloadType": "str",
+    "x": 160,
+    "y": 420,
+    "wires": [
+      [
+        "function-command"
+      ]
+    ]
+  },
+  {
+    "id": "function-command",
+    "type": "function",
+    "z": "tab-a4-hivemq",
+    "name": "Montar comando JSON",
+    "func": "msg.payload = {\n    command: String(msg.payload).toUpperCase(),\n    request_id: \"nr-\" + Date.now(),\n    sent_at_ms: Date.now()\n};\n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 400,
+    "y": 360,
+    "wires": [
+      [
+        "mqtt-out-command",
+        "debug-command"
+      ]
+    ]
+  },
+  {
+    "id": "mqtt-out-command",
+    "type": "mqtt out",
+    "z": "tab-a4-hivemq",
+    "name": "Enviar comando ao ESP32",
+    "topic": "mck/oic/a4/demo-48317/monitoramento/comandos",
+    "qos": "",
+    "retain": "",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "hivemq-a4-broker",
+    "x": 690,
+    "y": 340,
+    "wires": []
+  },
+  {
+    "id": "debug-command",
+    "type": "debug",
+    "z": "tab-a4-hivemq",
+    "name": "Comando enviado",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 680,
+    "y": 420,
+    "wires": []
+  }
+]
